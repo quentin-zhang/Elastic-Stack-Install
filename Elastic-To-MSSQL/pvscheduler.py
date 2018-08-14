@@ -85,9 +85,9 @@ class PVScheduler:
             conn.commit()
             conn.close()
             # cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
-            #           "Server=172.31.1.40;"
-            #           "Database=GSPFeedback;"
-            #           "UID=sa;PWD=!QAZ2wsx??!")
+            #           "Server=1.2.3.4;"
+            #           "Database=db;"
+            #           "UID=sa;PWD=123456")
 
 
             # cursor = cnxn.cursor()
