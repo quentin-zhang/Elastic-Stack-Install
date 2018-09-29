@@ -80,7 +80,7 @@ class PVScheduler:
                                    password=self.uvconf['mssql']['password'],
                                    database=self.uvconf['mssql']['database'])
             cursor = conn.cursor()
-            cursor.execute("update UBAPVPerDay set ViewCount = %d where ProjectName = 'INSPURECM' and CreateTime = %s ",
+            cursor.execute("insert into UBAPVPerDay (ViewCount,ProjectName,CreateTime) values (%d,'INSPURECM',%s) ",
                            (self.rCount, self.yesterday_endStr))
             conn.commit()
             conn.close()
@@ -94,7 +94,7 @@ class PVScheduler:
             # cursor.execute("update UBAPVPerDay set ViewCount = ? where ProjectName = 'INSPURECM' and CreateTime = ? ",
             # (self.rCount, self.yesterday_endStr))
             # cnxn.commit()
-            print('success update')
+            print('success insert UBAPVPerDay')
         except Exception as e:
             print('Error:', e)
         finally:
