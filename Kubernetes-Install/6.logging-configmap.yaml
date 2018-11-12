@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logging-configmap
+  namespace: kube-system
+data:
+  logstash.yml: |
+    path.config: /usr/share/logstash/pipeline
+    xpack.monitoring.enabled: false
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+      if [type] == "kube-logs" {
+        mutate {
+          rename => ["log", "message"]
+          add_tag => [ "pelias", "kubernetes" ]
+        }
+        date {
+          match => ["time", "ISO8601"]
+          remove_field => ["time"]
+        }
+        grok {
+            match => { "source" => "/var/log/containers/%{DATA:pod_name}_%{DATA:namespace}_%{GREEDYDATA:container_name}-%{DATA:container_id}.log" }
+            remove_field => ["source"]
+        }
+        grok {
+            match => { "source" => "/var/log/hostlogs/%{DATA:container_name}.log" }
+            add_field => { "namespace" => "kube-system" }
+            remove_field => ["source"]
+        }
+      }
+    }
+    output {
+      if "influxdb" in [kubernetes][container][name]
+      {
+        elasticsearch{
+          hosts => ["45.32.139.23:9200"]
+          manage_template=>false
+          index => "%{[kubernetes][container][name]}-%{+YYYY-MM-dd}"
+          user => "elastic"
+          password => "changeme"
+        }
+      }
+    }
