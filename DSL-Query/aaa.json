@@ -1,0 +1,37 @@
+GET /cloudplus-clientpv-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "collectTime": {
+                            "gte": "2018-09-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_day": {
+            "date_histogram": {
+                "field": "collectTime",
+                "interval": "day",
+                "time_zone": "+08:00"
+            },
+            "aggs": {
+                "distinct_count": {
+                    "cardinality": {
+                        "field": "userID.keyword",
+                        "precision_threshold": "10000"
+                    }
+                }
+            }
+        }
+    }
+}
