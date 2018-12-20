@@ -9,7 +9,7 @@ def job():
     print("OK...")
 
 
-schedule.every().day.at("7:00").do(job)
+schedule.every().day.at("6:50").do(job)
 while True:
     schedule.run_pending()
     time.sleep(1)

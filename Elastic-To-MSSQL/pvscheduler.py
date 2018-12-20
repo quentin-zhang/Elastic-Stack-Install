@@ -62,7 +62,7 @@ class PVScheduler:
         }
         try:
             result = es.count(index='nginx:stable.alpine_1.entry.ecm-' + self.yesterday_endStr,
-                              doc_type='doc', body=bodystr)
+                              doc_type='doc', body=bodystr,request_timeout=60)
             self.rCount = result.get('count')
             print(self.rCount)
             print('success collect')

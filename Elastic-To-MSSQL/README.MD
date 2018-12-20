@@ -10,6 +10,7 @@
 
 ```bash
    docker run -it -d --rm --name uvperday uvperday:0.0.11
+   docker run -it -d --name uvperday uvperday:0.0.11
 ```
 
 3.进入容器
