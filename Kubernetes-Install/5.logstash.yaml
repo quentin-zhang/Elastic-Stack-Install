@@ -35,10 +35,10 @@ data:
       }
     }
     output {
-      if "influxdb" in [kubernetes][container][name]
+      if [kubernetes][container][name]
       {
         elasticsearch{
-          hosts => ["45.32.139.23:9200"]
+          hosts => ["172.31.2.48:9200"]
           manage_template=>false
           index => "%{[kubernetes][container][name]}-%{+YYYY-MM-dd}"
           user => "elastic"
