@@ -1,0 +1,530 @@
+//首屏加载耗时
+GET /frontperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "@timestamp": {
+                            "gte": "2019-04-08 08:30:00",
+                            "lte": "2019-04-09 20:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "avg_grade": {
+            "avg": {
+                "field": "pageFullLoadTime"
+            }
+        }
+    }
+}
+//客户端调用平均时长
+GET /ajaxcall-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTime": {
+                            "gte": "2019-04-08 08:30:00",
+                            "lte": "2019-04-08 20:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "elapsedTime": {
+                            "gte": 0
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "avg_grade": {
+            "avg": {
+                "field": "elapsedTime"
+            }
+        }
+    }
+}
+//服务调用平均耗时
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-07 08:00:00",
+                            "lte": "2019-04-07 20:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "elapsedMilliseconds": {
+                            "gte": 1
+                        }
+                    }
+                },
+                {
+                    "bool": {
+                        "must_not": [
+                            {
+                                "term": {
+                                    "methodName.keyword": "PCMessage"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "avg_grade": {
+            "avg": {
+                "field": "elapsedMilliseconds"
+            }
+        }
+    }
+}
+//SQL执行平均耗时
+GET /backsqlperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTimeStamp": {
+                            "gte": "2019-04-07 08:30:00",
+                            "lte": "2019-04-07 20:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "avg_grade": {
+            "avg": {
+                "field": "elapsedMilliseconds"
+            }
+        }
+    }
+}
+//慢请求业务占比（大于4000毫秒）
+GET /ajaxcall-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTime": {
+                            "gte": "2019-04-08 08:30:00",
+                            "lte": "2019-04-08 20:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "elapsedTime": {
+                            "gte": 4000
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+//活跃用户数
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-06 00:00:00",
+                            "lte": "2019-04-06 23:59:59",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "functionCount": {
+            "cardinality": {
+                "field": "user.keyword",
+                "precision_threshold": "10000"
+            }
+        }
+    }
+}
+//响应时长2秒以内的分布
+GET /ajaxcall-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTime": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "elapsedTime": {
+                            "gte": 0,
+                            "lte": 2000
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_elapsedMilliseconds": {
+            "histogram": {
+                "field": "elapsedTime",
+                "interval": 200,
+                "order": {
+                    "_count": "desc"
+                },
+                "min_doc_count": 1
+            }
+        }
+    }
+}
+//响应时长20秒以内的分布
+GET /ajaxcall-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTime": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "elapsedTime": {
+                            "gte": 0,
+                            "lte": 20000
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_elapsedMilliseconds": {
+            "histogram": {
+                "field": "elapsedTime",
+                "interval": 2000,
+                "order": {
+                    "_count": "desc"
+                },
+                "min_doc_count": 1
+            }
+        }
+    }
+}
+//SQL语句执行时长Top10
+
+GET /backsqlperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "startTimeStamp": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_funcId": {
+            "terms": {
+                "field": "commandText.keyword",
+                "size": 100,
+                "order": {
+                    "max_elapsed": "desc"
+                }
+            },
+            "aggs": {
+                "max_elapsed": {
+                    "max": {
+                        "field": "elapsedMilliseconds"
+                    }
+                }
+            }
+        }
+    }
+}
+//功能最大响应时间Top
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_funcId": {
+            "terms": {
+                "field": "funcId.keyword",
+                "size": 100,
+                "order": {
+                    "max_elapsed": "desc"
+                }
+            },
+            "aggs": {
+                "max_elapsed": {
+                    "max": {
+                        "field": "elapsedMilliseconds"
+                    }
+                }
+            }
+        }
+    }
+}
+//功能平均响应时间Top
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_funcId": {
+            "terms": {
+                "field": "funcId.keyword",
+                "size": 100,
+                "order": {
+                    "avg_elapsed": "desc"
+                }
+            },
+            "aggs": {
+                "avg_elapsed": {
+                    "avg": {
+                        "field": "elapsedMilliseconds"
+                    }
+                }
+            }
+        }
+    }
+}
+//方法最大响应时间Top
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_methodName": {
+            "terms": {
+                "field": "methodName.keyword",
+                "size": 100,
+                "order": {
+                    "max_elapsed": "desc"
+                }
+            },
+            "aggs": {
+                "max_elapsed": {
+                    "max": {
+                        "field": "elapsedMilliseconds"
+                    }
+                },
+                "group_by_bizComponentURI": {
+                    "terms": {
+                        "field": "bizComponentURI.keyword"
+                    },
+                    "aggs": {
+                        "bizComponentURI_max_elapsed": {
+                            "max": {
+                                "field": "elapsedMilliseconds"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+//方法平均响应时间Top
+GET /backmethodperformance-*/_search
+{
+    "size": 0,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "now",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs": {
+        "group_by_methodName": {
+            "terms": {
+                "field": "methodName.keyword",
+                "size": 100,
+                "order": {
+                    "avg_elapsed": "desc"
+                }
+            },
+            "aggs": {
+                "avg_elapsed": {
+                    "avg": {
+                        "field": "elapsedMilliseconds"
+                    }
+                },
+                "group_by_bizComponentURI": {
+                    "terms": {
+                        "field": "bizComponentURI.keyword"
+                    },
+                    "aggs": {
+                        "bizComponentURI_avg_elapsed": {
+                            "avg": {
+                                "field": "elapsedMilliseconds"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+//查询功能，查询按数据大小排序
+GET /backmethodperformance-*/_search
+{
+    "size": 10,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "range": {
+                        "serverGotRequest": {
+                            "gte": "2019-04-01 00:00:00",
+                            "lte": "2019-04-08 00:00:00",
+                            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+                            "time_zone": "+08:00"
+                        }
+                    }
+                },
+                {
+                    "term": {
+                        "funcId.keyword": "OmsWL_Departmentresult"
+                    }
+                }
+            ]
+        }
+    },
+    "sort": [
+        {
+            "elapsedMilliseconds": {
+                "order": "desc"
+            }
+        }
+    ]
+}

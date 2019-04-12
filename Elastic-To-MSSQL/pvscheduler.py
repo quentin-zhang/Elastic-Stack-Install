@@ -13,7 +13,7 @@ class PVScheduler:
         f = open('uvsum.yaml', 'r')
         self.uvconf = yaml.load(f)
         self.yesterday = datetime.date.today() + datetime.timedelta(days=-1)
-        self.today = datetime.date.today() 
+        self.today = datetime.date.today()
         self.yesterday_endStr = str(self.yesterday.year) + '-' + \
             f'{self.yesterday.month:02}' + '-' + f'{self.yesterday.day:02}'
 
