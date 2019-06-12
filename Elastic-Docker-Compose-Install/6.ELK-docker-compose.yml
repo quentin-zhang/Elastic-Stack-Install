@@ -6,7 +6,7 @@ services:
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     ulimits:
       memlock:
         soft: -1
@@ -24,7 +24,7 @@ services:
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     ulimits:
       memlock:
         soft: -1
@@ -39,7 +39,7 @@ services:
     image: docker.elastic.co/kibana/kibana:5.5.3
     container_name: kibana
     environment:
-      - "ELASTICSEARCH_URL=http://172.16.23.55:9200"
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
       - "ELASTICSEARCH_USERNAME=elastic"
       - "ELASTICSEARCH_PASSWORD=changeme"
     ports:
