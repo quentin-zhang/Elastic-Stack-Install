@@ -75,7 +75,7 @@ OPERATION_TYPE = "createDatabase"
 # Default value : None
 # Mandatory     : Yes
 #-----------------------------------------------------------------------------
-GDBNAME = "zakss"
+GDBNAME = "ksswebdb"
 
 #-----------------------------------------------------------------------------
 # Name          : RACONENODE
@@ -167,7 +167,7 @@ GDBNAME = "zakss"
 # Default value : <db_name> specified in GDBNAME
 # Mandatory     : No
 #-----------------------------------------------------------------------------
-SID = "ORA11G"
+SID = "ksswebdb"
 
 #-----------------------------------------------------------------------------
 # Name          : NODELIST
