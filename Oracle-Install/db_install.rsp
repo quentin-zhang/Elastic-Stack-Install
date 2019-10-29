@@ -34,7 +34,7 @@ oracle.install.option=INSTALL_DB_SWONLY
 # first hostname found on the system. (e.g., for systems with multiple hostnames 
 # and network interfaces)
 #-------------------------------------------------------------------------------
-ORACLE_HOSTNAME=za-db-center
+ORACLE_HOSTNAME=dbcenter5
 
 #-------------------------------------------------------------------------------
 # Specify the Unix group to be set for the inventory directory.  
@@ -210,7 +210,7 @@ oracle.install.db.config.starterdb.SID=
 # KO16MSWIN949, ZHS16GBK, TH8TISASCII, ZHT32EUC, ZHT16MSWIN950,
 # ZHT16HKSCS, WE8ISO8859P9, TR8MSWIN1254, VN8MSWIN1258
 #------------------------------------------------------------------------------
-oracle.install.db.config.starterdb.characterSet=AL32UTF8
+oracle.install.db.config.starterdb.characterSet=ZHS16GBK
 
 #------------------------------------------------------------------------------
 # This variable should be set to true if Automatic Memory Management 
