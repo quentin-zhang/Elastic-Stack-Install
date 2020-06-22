@@ -1,0 +1,54 @@
+# 因为我们Runner执行器设置为docker, 所以这里需要指定docker的版本
+image: docker:stable
+# 定义三个阶段
+stages:
+  - compile
+  - build
+  - run
+# 定义个变量, 指定maven下载的jar包存放的位置
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=/.m2"
+# 第一阶段
+compile:
+  # 打包用到了maven, 所有需要拉取maven镜像, 这是我自己构建的阿里云maven私服的maven镜像
+  image: registry.cn-hangzhou.aliyuncs.com/xxx/maven:1.0
+  # 指定阶段
+  stage: compile
+  # 运行脚本, 使用变量时要用到 $ 符号
+  script:
+    - mvn $MAVEN_OPTS clean package -Dmaven.test.skip=true
+  # 只作用在master分支
+  only:
+    - master
+  # 创建runner时指定的tag
+  tags:
+    - aaa
+  # 编译后有产物,所以要指定下过期时间和路径, 以供于其他阶段使用
+  artifacts:
+    expire_in: 1 days
+    paths:
+      - ci/target/*.jar
+# 第二阶段, 这里不再一一介绍, 和第一阶段差不多
+build:
+  stage: build
+  script:
+  # 这里填写正确的docker镜像地址
+    - docker build -f ci/Dockerfile -t registry.cn-hangzhou.aliyuncs.com/xxx/test:1.0.0 .
+    # 这里填写镜像地址的用户名和密码
+    - docker login --username $ARTIFACTS_REPO_USERNAME --password $ARTIFACTS_REPO_PASSWORD registry.cn-hangzhou.aliyuncs.com
+    # 这里填写正确的docker镜像地址
+    - docker push registry.cn-hangzhou.aliyuncs.com/xxx/test:1.0.0
+  only:
+    - master
+  tags:
+    - aaa
+
+#run:
+#  stage: run
+#  script:
+#    - docker run -d --name my-test -p 8000:8000 registry.cn-hangzhou.aliyuncs.com/quentin/test:1.0.0
+#  only:
+#    - master
+#  tags:
+#    - aaa
+#    - aaa
