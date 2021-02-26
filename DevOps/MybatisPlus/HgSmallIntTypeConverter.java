@@ -1,6 +1,6 @@
-package com.mamcharge.integrate.core.handler.type;
+package com.charge.integrate.core.handler.type;
 
-import com.mamcharge.integrate.core.domain.form.MamColumn;
+import com.charge.integrate.core.domain.form.MamColumn;
 import org.apache.ibatis.type.*;
 
 import java.sql.*;
